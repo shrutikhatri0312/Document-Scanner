@@ -13,13 +13,11 @@ float w = 420, h = 596;
 
 Mat preProcessing(Mat img)
 {
-	//cvtColor(img, imgGray, COLOR_BGR2GRAY);
 	cvtColor(imgOriginal, imgGray, COLOR_BGR2GRAY);
 	GaussianBlur(imgGray, imgBlur, Size(3, 3), 3, 0);
 	Canny(imgBlur, imgCanny, 25, 75);
 	Mat kernel = getStructuringElement(MORPH_RECT, Size(3, 3));
 	dilate(imgCanny, imgDil, kernel);
-	//erode(imgDil, imgErode, kernel);
 	return imgDil;
 }
 
@@ -29,7 +27,6 @@ vector<Point> getContours(Mat image) {
 	vector<Vec4i> hierarchy;
 
 	findContours(image, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-	//drawContours(img, contours, -1, Scalar(255, 0, 255), 2);
 	vector<vector<Point>> conPoly(contours.size());
 	vector<Rect> boundRect(contours.size());
 
@@ -48,7 +45,6 @@ vector<Point> getContours(Mat image) {
 
 			if (area > maxArea && conPoly[i].size() == 4) {
 
-				//drawContours(imgOriginal, conPoly, i, Scalar(255, 0, 255), 5);
 				biggest = { conPoly[i][0],conPoly[i][1] ,conPoly[i][2] ,conPoly[i][3] };
 				maxArea = area;
 			}
@@ -107,13 +103,10 @@ void main() {
 	// Preprpcessing – Step 1
 	imgThre = preProcessing(imgOriginal);
 
-	// Get Contours – Biggest – Step 2
+	// Get Contours – Step 2
 	initialPoints = getContours(imgThre);
-	
-	//drawPoints(initialPoints, Scalar(0, 0, 255));
 	docPoints = reorder(initialPoints);
-	//drawPoints(docPoints, Scalar(0, 255, 0));
-
+	
 	// Warp – Step 3
 	imgWarp = getWarp(imgOriginal, docPoints, w, h);
 
